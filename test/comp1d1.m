@@ -1,12 +1,12 @@
-Nlist = 2.^(7:30);
+Nlist = 2.^(7:35);
 
 timNUFFTFact = zeros(size(Nlist));
 timNUFFTApp = zeros(size(Nlist));
 timNUFFTAppnyu=zeros(size(Nlist));
 timeM=zeros(size(Nlist));
 errNUFFT = zeros(size(Nlist));
-tol=1e-9;
-num = 1;
+tol=1e-12;
+num = 200;
 
 for it = 1:length(Nlist)
     
@@ -55,11 +55,14 @@ timNUFFTApp
 timNUFFTAppnyu
 timeM
 timecomp=timeM./timNUFFTAppnyu
-fid=fopen('./timeYH.mat','at');
+fid=fopen('./result1d1/time1d1YH.mat','at');
 fprintf(fid,'% -f\n',timeM);
 fclose(fid);
-fid=fopen('./timeNYU.mat','at');
+fid=fopen('./result1d1/time1d1NYU.mat','at');
 fprintf(fid,'% -f\n',timNUFFTAppnyu);
+fclose(fid);
+fid=fopen('./result1d1/time1d1LR.mat','at');
+fprintf(fid,'% -f\n',timNUFFTApp);
 fclose(fid);
 figure
 loglog(Nlist,timNUFFTAppnyu,'r');
