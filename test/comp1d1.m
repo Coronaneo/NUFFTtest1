@@ -1,4 +1,4 @@
-Nlist = 2.^(7:30);
+Nlist = 2.^(7:12);
 
 timNUFFTFact = zeros(size(Nlist));
 timNUFFTApp = zeros(size(Nlist));
@@ -6,7 +6,7 @@ timNUFFTAppnyu=zeros(size(Nlist));
 timeM=zeros(size(Nlist));
 errNUFFT = zeros(size(Nlist));
 tol=1e-12;
-num = 200;
+num = 2;
 
 for it = 1:length(Nlist)
     
