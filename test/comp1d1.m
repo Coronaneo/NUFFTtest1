@@ -1,4 +1,4 @@
-Nlist = 2.^(7:35);
+Nlist = 2.^(7:30);
 
 timNUFFTFact = zeros(size(Nlist));
 timNUFFTApp = zeros(size(Nlist));
