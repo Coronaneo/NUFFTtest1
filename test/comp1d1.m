@@ -64,10 +64,3 @@ fclose(fid);
 fid=fopen('./result1d1/time1d1LR.mat','at');
 fprintf(fid,'% -f\n',timNUFFTApp);
 fclose(fid);
-figure
-loglog(Nlist,timNUFFTAppnyu,'r');
-hold on
-loglog(Nlist,timNUFFTApp,'g');
-hold on
-loglog(Nlist,timeM,'b');
-xlabel('N'),ylabel('time'),title('One-dimensional-TypeI Comparison tol=1e-6'),legend('NYU','Yingzhou','Haizhao','location','northwest')
