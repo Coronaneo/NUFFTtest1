@@ -31,8 +31,8 @@ for it = 1:length(Nlist)
     
     tic;
     for cnt = 1:num
-    fk=nufft1d1(N,x1,c,-1,tol,N)*N;
-    fk=fftshift(fk);
+    %fk=nufft1d1(N,x1,c,-1,tol,N)*N;
+    %fk=fftshift(fk);
     end
     timNUFFTAppnyu(it)=toc/num;
     
