@@ -1,4 +1,4 @@
-Nlist = 2.^(7:12);
+Nlist = 2.^(7:30);
 
 timNUFFTFact = zeros(size(Nlist));
 timNUFFTApp = zeros(size(Nlist));
@@ -6,7 +6,8 @@ timNUFFTAppnyu=zeros(size(Nlist));
 timeM=zeros(size(Nlist));
 errNUFFT = zeros(size(Nlist));
 tol=1e-12;
-num = 2;
+num = 200;
+iflag=-1;
 
 for it = 1:length(Nlist)
     
@@ -17,7 +18,7 @@ for it = 1:length(Nlist)
     
     tic;
     for cnt = 1:num
-    nufftfun = nufftI(x,-1,N,15,tol);
+    nufftfun = nufftI(x,iflag,N,15,tol);
     end
     timNUFFTFact(it) = toc/num;
     
@@ -31,6 +32,7 @@ for it = 1:length(Nlist)
     
     tic;
     for cnt = 1:num
+    [fk, ier] = nufft1df90(N, x1, c, iflag, tol, N);
     %fk=nufft1d1(N,x1,c,-1,tol,N)*N;
     %fk=fftshift(fk);
     end
