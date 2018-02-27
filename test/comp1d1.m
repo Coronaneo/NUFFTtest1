@@ -32,6 +32,8 @@ for it = 1:length(Nlist)
     
     tic;
     for cnt = 1:num
+    fk=zeros(ms,1)+1i*zeros(ms,1);
+    ier=0;
     [fk, ier] = nufft1df90(N, x1, c, iflag, tol, N);
     %fk=nufft1d1(N,x1,c,-1,tol,N)*N;
     %fk=fftshift(fk);
