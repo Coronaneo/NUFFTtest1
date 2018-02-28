@@ -18,7 +18,7 @@ c
       integer ms,nj
       real*8 eps,pi
       real*8 xj(nj)
-      parameter (pi=3.141592653589793d0),(num=200)
+      parameter (num=200)
       complex*16 cj(nj),fk(-ms/2:(ms-1)/2)
 
 
@@ -27,7 +27,7 @@ c     call 1D Type1 method
 c     -----------------------
 c
       do q=1,num
-	   call nufft1d1f90(nj,xj,cj,iflag,eps, ms,fk1,ier)
+	   call nufft1d1f90(nj,xj,cj,iflag,eps, ms,fk,ier)
 	enddo
 	return
 	end
