@@ -34,7 +34,7 @@ for it = 1:length(Nlist)
     for cnt = 1:num
     fk=zeros(N,1)+1i*zeros(N,1);
     ier=0;
-    [fk, ier] = nufft1d1f90(N, x1, c, iflag, tol, N,fk,ier);
+    nufft1d_demof90(N, x1, c, iflag, tol, N,fk,ier);
     %fk=nufft1d1(N,x1,c,-1,tol,N)*N;
     %fk=fftshift(fk);
     end
