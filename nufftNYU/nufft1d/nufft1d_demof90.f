@@ -14,11 +14,11 @@ cc if not, see <http://www.gnu.org/licenses/>.
 c
       subroutine nufft1d1_demof90(nj,xj,cj,iflag,eps,ms,fk,ier)
       implicit none
-      integer ier,iflag
+      integer ier,iflag,q,num
       integer ms,nj
       real*8 eps,pi
       real*8 xj(nj)
-      parameter (pi=3.141592653589793d0)
+      parameter (pi=3.141592653589793d0),(num=200)
       complex*16 cj(nj),fk(-ms/2:(ms-1)/2)
 
 
@@ -26,5 +26,9 @@ c     -----------------------
 c     call 1D Type1 method
 c     -----------------------
 c
-         call nufft1d1f90(nj,xj,cj,iflag,eps, ms,fk1,ier)
+      do q=1,num
+	   call nufft1d1f90(nj,xj,cj,iflag,eps, ms,fk1,ier)
+	enddo
+	return
+	end
 c
