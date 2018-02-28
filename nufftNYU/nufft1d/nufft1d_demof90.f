@@ -26,9 +26,9 @@ c     -----------------------
 c     call 1D Type1 method
 c     -----------------------
 c
-      do q=1,num
+   
 	   call nufft1d1f90(nj,xj,cj,iflag,eps, ms,fk,ier)
-	enddo
+	
 	return
 	end
 c
