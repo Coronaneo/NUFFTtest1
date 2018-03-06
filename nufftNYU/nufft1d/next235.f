@@ -1,4 +1,16 @@
+c	#include "fintrf.h"
+c	subroutine mexFunction(nlhs,plhs,nrhs,prhs)
+c 	implicit none
+c	integer nlhs,nrhs
+c	real*8 plhs(*),prhs(*)
+
+c	plhs(1)=next235(prhs(1))
+c	end
+
+
+
 ************************************************************************
+      
       function next235(base)
       implicit none
       integer next235, numdiv

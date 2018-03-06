@@ -5,7 +5,30 @@ c    (due to P. Swarztrauber).
 c
 c    Please see NETLIB (http://www.netlib.org) for further details.
 c
-c-------------------------------------------------------------------
+c-----
+c	#include "fintrf.h"
+c	subroutine mexFunction(nlhs,plhs,nrhs,prhs)
+c	implicit none
+c	integer nlhs,nrhs
+c	double precision plhs(*),prhs(*)
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+c--------------------------------------------------------------
       subroutine dcfftb (n,c,wsave)
       double precision c(1), wsave(1)
 c
@@ -17,6 +40,9 @@ c
 c
       return
       end
+
+
+
       subroutine dcfftf (n,c,wsave)
       double precision c(1), wsave(1)
 c
@@ -28,6 +54,9 @@ c
 c
       return
       end
+
+
+
       subroutine dcffti (n,wsave)
       double precision wsave(1)
 c
@@ -39,9 +68,14 @@ c
 c
       return
       end
+
+
+
+
       subroutine dcftb1 (n,c,ch,wa,ifac)
       double precision c(1), ch(1), wa(1)
       integer ifac(1)
+
 c
       nf = ifac(2)
       na = 0
@@ -109,6 +143,11 @@ c
 c
       return
       end
+
+
+
+
+
       subroutine dcftf1 (n,c,ch,wa,ifac)
       double precision c(1), ch(1), wa(1)
       integer ifac(1)
@@ -179,6 +218,10 @@ c
 c
       return
       end
+
+
+
+
       subroutine dcfti1 (n,wa,ifac)
       double precision wa(1), arg, argh, argld, fi, tpi
       integer ifac(1), ntryh(4)

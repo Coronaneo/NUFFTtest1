@@ -31,7 +31,31 @@ c
 c  Different applications have different needs, and we have chosen
 c  to provide the simplest code as a reasonable efficient template.
 c
-c**********************************************************************
+	#include "fintrf.h" 
+      subroutine mexFunction(nlhs,plhs,nrhs,prhs)
+	implicit none
+	complex*16 plhs(*),prhs(*)
+	integer nlhs,nrhs
+
+	plhs(1)=prhs(7)
+	plhs(2)=prhs(8)
+
+	if (prhs(9).eq.1) then
+	  call  nufft1d1f90(prhs(1),prhs(2),prhs(3),prhs(4),prhs(5),prhs(6),plhs(1),plhs(2));
+	endif
+
+	if (prhs(9).eq.2) then
+	  call  nufft1d2f90(prhs(1),prhs(2),prhs(3),prhs(4),prhs(5),prhs(6),plhs(1),plhs(2));
+	endif
+
+	if (prhs(9).eq.3) then
+	  call  nufft1d3f90(prhs(1),prhs(2),prhs(3),prhs(4),prhs(5),prhs(6),plhs(1),plhs(2));
+	endif
+	return
+	end
+
+
+c*************************************************************************************************
       subroutine nufft1d1f90(nj,xj,cj,iflag,eps,ms,fk,ier)
       implicit none
       integer ier,iflag,istart,iw1,iwtot,iwsav
