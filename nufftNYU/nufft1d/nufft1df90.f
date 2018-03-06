@@ -31,101 +31,99 @@ c
 c  Different applications have different needs, and we have chosen
 c  to provide the simplest code as a reasonable efficient template.
 c
-	 #include "fintrf.h"
+#include "fintrf.h"
  
-      subroutine mexFunction(nlhs,plhs,nrhs,prhs)
-	implicit none
-	integer    :: nlhs,nrhs
-	mwPointer  :: plhs(*),prhs(*)
-	mwPointer mxGetPr, mxGetM, mxGetN,mxCreateDoubleMatrix 
-	integer nj,iflag,ms,ier,nk,sk,typ,m,n
-	real*8  eps
-	real*8,	allocatable  ::  xj(:,:),cj(:,:)
-	complex*16,allocatable  :: fk(:,:)
+        subroutine mexFunction(nlhs,plhs,nrhs,prhs)
+        
+        integer    :: nlhs,nrhs
+        mwPointer  :: plhs(*),prhs(*)
+         
+        integer nj,iflag,ms,ier,nk,sk,typ
+        real*8  eps
+        real*8,allocatable  ::  xj(:,:),cj(:,:)
+        complex*16,allocatable  :: fk(:,:)
 
-	plhs(1)=prhs(7)
-	plhs(2)=prhs(8)
+        
 
-	if (nrhs .eq. 9) then
-	   call mxCopyPtrToInteger4(mxGetPr(prhs(9)),typ)
-	  if (typ .eq. 1) then
-	   call mxCopyPtrToInteger4(mxGetPr(prhs(1)),nj,1*1)
-	   call mxCopyPtrToInteger4(mxGetPr(prhs(4)),iflag,1*1)
-	   call mxCopyPtrToReal8(mxGetPr(prhs(5)),eps,1*1)
-	   call mxCopyPtrToInteger4(mxGetPr(prhs(6)),ms,1*1)
-	   call mxCopyPtrToInteger4(mxGetPr(prhs(8)),ier,1*1)
-	   m=mxGetM(prhs(2))
-	   n=mxGetN(prhs(2))
-	   allocate(x(m,n))
-	   call mxCopyPtrToReal8(mxGetPr(prhs(2)),xj,m*n)
-	   m=mxGetM(prhs(2))
-	   n=mxGetN(prhs(2))
-	   allocate(x(m,n))
-	   call mxCopyPtrToReal8(mxGetPr(prhs(3)),cj,m*n)
-	   m=mxGetM(prhs(2))
-	   n=mxGetN(prhs(2))
-	   allocate(x(m,n))
-	   call mxCopyPtrToComplex16(mxGetPr(prhs(7)),fk,m*n)
-	   call  nufft1d1f90(nj,xj,cj,iflag,eps,ms,fk,ier)
-	   plhs(1)=mxCreateDoubleMatrix(m,n,0)
-	   call mxCopyComplex16ToPtr(fk,mxGetPr(plhs(1)),m*n)
-	   plhs(2)=mxCreateDoubleMatrix(1,1,0)
-	   call mxCopyInteger4ToPtr(ier,mxGetPr(plhs(2)),1*1)
-	  endif
-	  if (typ .eq. 2) then 
-	   call mxCopyPtrToInteger4(mxGetPr(prhs(1)),nj,1*1)
-	   call mxCopyPtrToInteger4(mxGetPr(prhs(4)),iflag,1*1)
-	   call mxCopyPtrToReal8(mxGetPr(prhs(5)),eps,1*1)
-	   call mxCopyPtrToInteger4(mxGetPr(prhs(6)),ms,1*1)
-	   call mxCopyPtrToInteger4(mxGetPr(prhs(8)),ier,1*1)
-	   m=mxGetM(prhs(2))
-	   n=mxGetN(prhs(2))
-	   allocate(x(m,n))
-	   call mxCopyPtrToReal8(mxGetPr(prhs(2)),xj,m*n)
-	   m=mxGetM(prhs(2))
-	   n=mxGetN(prhs(2))
-	   allocate(x(m,n))
-	   call mxCopyPtrToReal8(mxGetPr(prhs(3)),cj,m*n)
-	   m=mxGetM(prhs(2))
-	   n=mxGetN(prhs(2))
-	   allocate(x(m,n))
-	   call mxCopyPtrToComplex16(mxGetPr(prhs(7)),fk,m*n)
-	   call  nufft1d2f90(nj,xj,cj,iflag,eps,ms,fk,ier)
-	   plhs(1)=mxCreateDoubleMatrix(m,n,0)
-	   call mxCopyComplex16ToPtr(fk,mxGetPr(plhs(1)),m*n)
-	   plhs(2)=mxCreateDoubleMatrix(1,1,0)
-	   call mxCopyInteger4ToPtr(ier,mxGetPr(plhs(2)),1*1)
-	  endif
-	endif
-	if (nrhs .eq. 10) then
-	   call mxCopyPtrToInteger4(mxGetPr(prhs(1)),nj,1*1)
-	   call mxCopyPtrToInteger4(mxGetPr(prhs(4)),iflag,1*1)
-	   call mxCopyPtrToReal8(mxGetPr(prhs(5)),eps,1*1)
-	   call mxCopyPtrToInteger4(mxGetPr(prhs(6)),nk,1*1)
-	   call mxCopyPtrToInteger4(mxGetPr(prhs(7)),sk,1*1)
-	   call mxCopyPtrToInteger4(mxGetPr(prhs(9)),ier,1*1)
-	   m=mxGetM(prhs(2))
-	   n=mxGetN(prhs(2))
-	   allocate(x(m,n))
-	   call mxCopyPtrToReal8(mxGetPr(prhs(2)),xj,m*n)
-	   m=mxGetM(prhs(2))
-	   n=mxGetN(prhs(2))
-	   allocate(x(m,n))
-	   call mxCopyPtrToReal8(mxGetPr(prhs(3)),cj,m*n)
-	   m=mxGetM(prhs(2))
-	   n=mxGetN(prhs(2))
-	   allocate(x(m,n))
-	   call mxCopyPtrToComplex16(mxGetPr(prhs(8)),fk,m*n)
-	   call  nufft1d3f90(nj,xj,cj,iflag,eps,nk,sk,fk,ier)
-	   plhs(1)=mxCreateDoubleMatrix(m,n,0)
-	   call mxCopyComplex16ToPtr(fk,mxGetPr(plhs(1)),m*n)
-	   plhs(2)=mxCreateDoubleMatrix(1,1,0)
-	   call mxCopyInteger4ToPtr(ier,mxGetPr(plhs(2)),1*1)
-	  endif
-	endif
+        if (nrhs .eq. 9) then
+          call mxCopyPtrToInteger4(mxGetPr(prhs(9)),typ,1*1)
+          if (typ .eq. 1) then
+           call mxCopyPtrToInteger4(mxGetPr(prhs(1)),nj,1*1)
+           call mxCopyPtrToInteger4(mxGetPr(prhs(4)),iflag,1*1)
+           call mxCopyPtrToReal8(mxGetPr(prhs(5)),eps,1*1)
+           call mxCopyPtrToInteger4(mxGetPr(prhs(6)),ms,1*1)
+           call mxCopyPtrToInteger4(mxGetPr(prhs(8)),ier,1*1)
+           m=mxGetM(prhs(2))
+           n=mxGetN(prhs(2))
+           allocate(xj(m,n))
+           call mxCopyPtrToReal8(mxGetPr(prhs(2)),xj,m*n)
+           m=mxGetM(prhs(2))
+           n=mxGetN(prhs(2))
+           allocate(cj(m,n))
+           call mxCopyPtrToReal8(mxGetPr(prhs(3)),cj,m*n)
+           m=mxGetM(prhs(2))
+           n=mxGetN(prhs(2))
+           allocate(fk(m,n))
+           call mxCopyPtrToComplex16(mxGetPr(prhs(7)),fk,m*n)
+           call  nufft1d1f90(nj,xj,cj,iflag,eps,ms,fk,ier)
+           plhs(1)=mxCreateDoubleMatrix(m,n,0)
+           call mxCopyComplex16ToPtr(fk,mxGetPr(plhs(1)),m*n)
+           plhs(2)=mxCreateDoubleMatrix(1,1,0)
+           call mxCopyInteger4ToPtr(ier,mxGetPr(plhs(2)),1*1)
+          endif
+          if (typ .eq. 2) then 
+           call mxCopyPtrToInteger4(mxGetPr(prhs(1)),nj,1*1)
+           call mxCopyPtrToInteger4(mxGetPr(prhs(4)),iflag,1*1)
+           call mxCopyPtrToReal8(mxGetPr(prhs(5)),eps,1*1)
+           call mxCopyPtrToInteger4(mxGetPr(prhs(6)),ms,1*1)
+           call mxCopyPtrToInteger4(mxGetPr(prhs(8)),ier,1*1)
+           m=mxGetM(prhs(2))
+           n=mxGetN(prhs(2))
+           allocate(xj(m,n))
+           call mxCopyPtrToReal8(mxGetPr(prhs(2)),xj,m*n)
+           m=mxGetM(prhs(2))
+           n=mxGetN(prhs(2))
+           allocate(cj(m,n))
+           call mxCopyPtrToReal8(mxGetPr(prhs(3)),cj,m*n)
+           m=mxGetM(prhs(2))
+           n=mxGetN(prhs(2))
+           allocate(fk(m,n))
+           call mxCopyPtrToComplex16(mxGetPr(prhs(7)),fk,m*n)
+           call  nufft1d2f90(nj,xj,cj,iflag,eps,ms,fk,ier)
+           plhs(1)=mxCreateDoubleMatrix(m,n,0)
+           call mxCopyComplex16ToPtr(fk,mxGetPr(plhs(1)),m*n)
+           plhs(2)=mxCreateDoubleMatrix(1,1,0)
+           call mxCopyInteger4ToPtr(ier,mxGetPr(plhs(2)),1*1)
+          endif
+        endif
+        if (nrhs .eq. 10) then
+           call mxCopyPtrToInteger4(mxGetPr(prhs(1)),nj,1*1)
+           call mxCopyPtrToInteger4(mxGetPr(prhs(4)),iflag,1*1)
+           call mxCopyPtrToReal8(mxGetPr(prhs(5)),eps,1*1)
+           call mxCopyPtrToInteger4(mxGetPr(prhs(6)),nk,1*1)
+           call mxCopyPtrToInteger4(mxGetPr(prhs(7)),sk,1*1)
+           call mxCopyPtrToInteger4(mxGetPr(prhs(9)),ier,1*1)
+           m=mxGetM(prhs(2))
+           n=mxGetN(prhs(2))
+           allocate(xj(m,n))
+           call mxCopyPtrToReal8(mxGetPr(prhs(2)),xj,m*n)
+           m=mxGetM(prhs(2))
+           n=mxGetN(prhs(2))
+           allocate(cj(m,n))
+           call mxCopyPtrToReal8(mxGetPr(prhs(3)),cj,m*n)
+           m=mxGetM(prhs(2))
+           n=mxGetN(prhs(2))
+           allocate(fk(m,n))
+           call mxCopyPtrToComplex16(mxGetPr(prhs(8)),fk,m*n)
+           call  nufft1d3f90(nj,xj,cj,iflag,eps,nk,sk,fk,ier)
+           plhs(1)=mxCreateDoubleMatrix(m,n,0)
+           call mxCopyComplex16ToPtr(fk,mxGetPr(plhs(1)),m*n)
+           plhs(2)=mxCreateDoubleMatrix(1,1,0)
+           call mxCopyInteger4ToPtr(ier,mxGetPr(plhs(2)),1*1)
+        endif
 
-	return
-	end	subroutine
+        return
+        end subroutine
 
 
 c*************************************************************************************************

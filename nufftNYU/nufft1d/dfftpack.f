@@ -12,20 +12,6 @@ c	implicit none
 c	integer nlhs,nrhs
 c	double precision plhs(*),prhs(*)
 
-	
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 c--------------------------------------------------------------
