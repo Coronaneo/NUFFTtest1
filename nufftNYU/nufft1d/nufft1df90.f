@@ -31,7 +31,7 @@ c
 c  Different applications have different needs, and we have chosen
 c  to provide the simplest code as a reasonable efficient template.
 c
-	#include "fintrf.h" 
+	
       subroutine mexFunction(nlhs,plhs,nrhs,prhs)
 	implicit none
 	complex*16 plhs(*),prhs(*)
