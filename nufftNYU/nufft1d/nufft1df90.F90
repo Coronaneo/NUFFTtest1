@@ -1,35 +1,35 @@
-#include "fintrf.h"cc Copyright (C) 2004-2009: Leslie Greengard and June-Yub Lee 
-cc Contact: greengard@cims.nyu.edu
-cc 
-cc This program is free software; you can redistribute it and/or modify 
-cc it under the terms of the GNU General Public License as published by 
-cc the Free Software Foundation; eithe version 2 of the License, or 
-cc (at your option) any later version.  This program is distributed in 
-cc the hope that it will be useful, but WITHOUT ANY WARRANTY; without 
-cc even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
-cc PARTICULAR PURPOSE.  See the GNU General Public License for more 
-cc details. You should have received a copy of the GNU General Public 
-cc License along with this program; 
-cc if not, see <http://www.gnu.org/licenses/>.
-cc
-c
-c  NUFFT 1.2 release notes:
-c
-c  These codes are asymptotically fast (O(N log N)), but not optimizedc
-c  1) We initialize the FFT on every call.
-c
-c  2) We do not precompute the exponentials involved in "fast Gaussian
-c  gridding".
-c
-c  3) We do not block structure the code so that irregularly placed points
-c  are interpolated (gridded) in a cache-aware fashion.
-c
-c  4) We use the Netlib FFT library (www.netlib.org) 
-c     rather than the state of the art FFTW package (www.fftw.org).
-c
-c  Different applications have different needs, and we have chosen
-c  to provide the simplest code as a reasonable efficient template.
-c
+!#include "fintrf.h"cc Copyright (C) 2004-2009: Leslie Greengard and June-Yub Lee 
+! Contact: greengard@cims.nyu.edu
+! 
+! This program is free software; you can redistribute it and/or modify 
+! it under the terms of the GNU General Public License as published by 
+! the Free Software Foundation; eithe version 2 of the License, or 
+! (at your option) any later version.  This program is distributed in 
+! the hope that it will be useful, but WITHOUT ANY WARRANTY; without 
+! even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+! PARTICULAR PURPOSE.  See the GNU General Public License for more 
+! details. You should have received a copy of the GNU General Public 
+! License along with this program; 
+! if not, see <http://www.gnu.org/licenses/>.
+!
+!
+!  NUFFT 1.2 release notes:
+!
+!  These codes are asymptotically fast (O(N log N)), but not optimizedc
+!  1) We initialize the FFT on every call.
+!
+!  2) We do not precompute the exponentials involved in "fast Gaussian
+!  gridding".
+!
+!  3) We do not block structure the code so that irregularly placed points
+!  are interpolated (gridded) in a cache-aware fashion.
+!
+!  4) We use the Netlib FFT library (www.netlib.org) 
+!     rather than the state of the art FFTW package (www.fftw.org).
+!
+!  Different applications have different needs, and we have chosen
+!  to provide the simplest code as a reasonable efficient template.
+!
        #include "fintrf.h"
  
         subroutine mexFunction(nlhs,plhs,nrhs,prhs)
@@ -128,7 +128,7 @@ c
         end subroutine
 
 
-c*************************************************************************************************
+!*************************************************************************************************
       subroutine nufft1d1f90(nj,xj,cj,iflag,eps,ms,fk,ier)
       implicit none
       integer ier,iflag,istart,iw1,iwtot,iwsav
