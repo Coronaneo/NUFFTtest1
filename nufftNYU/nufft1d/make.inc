@@ -12,4 +12,4 @@ FORTRAN   = gfortran
 OPTS      = -O3
 FPPFLAGS  = -DLAP -DSLAP -fPIC
 
-LIBNAME = nufftNYU 
+LIBNAME = nufft1d 

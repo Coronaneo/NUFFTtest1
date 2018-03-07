@@ -1,12 +1,12 @@
-Nlist = 2.^(7:30);
+Nlist = 2.^(7:17);
 
 timNUFFTFact = zeros(size(Nlist));
 timNUFFTApp = zeros(size(Nlist));
 timNUFFTAppnyu=zeros(size(Nlist));
 timeM=zeros(size(Nlist));
 errNUFFT = zeros(size(Nlist));
-tol=1e-12;
-num = 200;
+tol=1e-9;
+num = 150;
 iflag=-1;
 
 for it = 1:length(Nlist)
@@ -30,15 +30,15 @@ for it = 1:length(Nlist)
     end
     timNUFFTApp(it) = toc/num;
     
-    tic;
-    for cnt = 1:num
-    fk=zeros(N,1)+1i*zeros(N,1);
-    ier=0;
-    nufft1d_demof90(N, x1, c, iflag, tol, N,fk,ier);
+%    tic;
+%    for cnt = 1:num
+%    fk=zeros(N,1)+1i*zeros(N,1);
+%    ier=0;
+%   nufft1d_demof90(N, x1, c, iflag, tol, N,fk,ier);
     %fk=nufft1d1(N,x1,c,-1,tol,N)*N;
     %fk=fftshift(fk);
-    end
-    timNUFFTAppnyu(it)=toc/num;
+%    end
+%    timNUFFTAppnyu(it)=toc/num;
     
     
     k=-N/2:(N/2-1);
@@ -56,15 +56,15 @@ for it = 1:length(Nlist)
 end
 
 timNUFFTApp
-timNUFFTAppnyu
+%timNUFFTAppnyu
 timeM
-timecomp=timeM./timNUFFTAppnyu
+%timecomp=timeM./timNUFFTAppnyu
 fid=fopen('./result1d1/time1d1YH.mat','at');
 fprintf(fid,'% -f\n',timeM);
 fclose(fid);
-fid=fopen('./result1d1/time1d1NYU.mat','at');
-fprintf(fid,'% -f\n',timNUFFTAppnyu);
-fclose(fid);
+%fid=fopen('./result1d1/time1d1NYU.mat','at');
+%fprintf(fid,'% -f\n',timNUFFTAppnyu);
+%fclose(fid);
 fid=fopen('./result1d1/time1d1LR.mat','at');
 fprintf(fid,'% -f\n',timNUFFTApp);
 fclose(fid);
