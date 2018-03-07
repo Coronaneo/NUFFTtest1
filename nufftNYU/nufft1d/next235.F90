@@ -1,25 +1,10 @@
-c	#include "fintrf.h"
-c	subroutine mexFunction(nlhs,plhs,nrhs,prhs)
-c 	implicit none
-c	integer nlhs,nrhs
-c	real*8 plhs(*),prhs(*)
 
-c	plhs(1)=next235(prhs(1))
-c	end
-
-
-
-************************************************************************
       
       function next235(base)
       implicit none
       integer next235, numdiv
       real*8 base
-c ----------------------------------------------------------------------
-c     integer function next235 returns a multiple of 2, 3, and 5
-c
-c     next235 = 2^p 3^q 5^r >= base  where p>=1, q>=0, r>=0
-************************************************************************
+
       next235 = 2 * int(base/2d0+.9999d0)
       if (next235.le.0) next235 = 2
 
