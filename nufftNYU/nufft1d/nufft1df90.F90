@@ -129,14 +129,14 @@
 
 
 !*************************************************************************************************
-      subroutine nufft1d1f90(nj,xj,cj,iflag,eps,ms,fk,ier)
+      subroutine nufft1d1f90(nj,xj,ocj,iflag,eps,ms,fk,ier)
       implicit none
       integer ier,iflag,istart,iw1,iwtot,iwsav
       integer j,jb1,jb1u,jb1d,k1,ms,next235,nf1,nj,nspread
-      real*8 cross,cross1,diff1,eps,hx,pi,rat,r2lamb,t1,tau
+      real*8 ocross,ocross1,diff1,eps,hx,pi,rat,r2lamb,t1,tau
       real*8 xc(-47:47),xj(nj)
       parameter (pi=3.141592653589793d0)
-      complex*16 cj(nj),fk(-ms/2:(ms-1)/2),zz,ccj
+      complex*16 ocj(nj),fk(-ms/2:(ms-1)/2),zz,occj
 ! ----------------------------------------------------------------------
       real*8, allocatable, save :: fw(:)
 ! ----------------------------------------------------------------------
@@ -176,7 +176,7 @@
       enddo
 
       do j = 1, nj
-         ccj = cj(j)/dble(nj)
+         occj = ocj(j)/dble(nj)
 
          jb1 = int((xj(j)+pi)/hx)
          diff1 = (xj(j)+pi)/hx - jb1
@@ -184,36 +184,36 @@
          if (jb1.lt.0) jb1=jb1+nf1
 
          xc(0) = exp(-t1*diff1**2)
-         cross = xc(0)
-         cross1 = exp(2d0*t1 * diff1)
+         ocross = xc(0)
+         ocross1 = exp(2d0*t1 * diff1)
          do k1 = 1, nspread
-            cross = cross * cross1
-            xc(k1) = fw(iw1+k1)*cross
+            ocross = ocross * ocross1
+            xc(k1) = fw(iw1+k1)*ocross
          enddo
-         cross = xc(0)
-         cross1 = 1d0/cross1
+         ocross = xc(0)
+         ocross1 = 1d0/ocross1
          do k1 = 1, nspread-1
-            cross = cross * cross1
-            xc(-k1) = fw(iw1+k1)*cross
+            ocross = ocross * ocross1
+            xc(-k1) = fw(iw1+k1)*ocross
          enddo
 
          jb1d = min(nspread-1, jb1)
          jb1u = min(nspread, nf1-jb1-1)
          do k1 = -nspread+1, -jb1d-1
 	    istart = 2*(jb1+k1+nf1)
-            zz=xc(k1)*ccj
+            zz=xc(k1)*occj
             fw(istart)=fw(istart)+dreal(zz)
             fw(istart+1)=fw(istart+1)+dimag(zz)
          enddo
          do k1 = -jb1d, jb1u
 	    istart = 2*(jb1+k1)
-            zz=xc(k1)*ccj
+            zz=xc(k1)*occj
             fw(istart)=fw(istart)+dreal(zz)
             fw(istart+1)=fw(istart+1)+dimag(zz)
          enddo
          do k1 = jb1u+1, nspread
 	    istart = 2*(jb1+k1-nf1)
-            zz=xc(k1)*ccj
+            zz=xc(k1)*occj
             fw(istart)=fw(istart)+dreal(zz)
             fw(istart+1)=fw(istart+1)+dimag(zz)
          enddo
@@ -226,34 +226,34 @@
       endif
 
       tau = pi * r2lamb / dble(nf1)**2
-      cross1 = 1d0/sqrt(r2lamb)
+      ocross1 = 1d0/sqrt(r2lamb)
       zz = dcmplx(fw(0),fw(1))
-      fk(0) = cross1*zz
+      fk(0) = ocross1*zz
       do k1 = 1, (ms-1)/2
-         cross1 = -cross1
-         cross = cross1*exp(tau*dble(k1)**2)
+         ocross1 = -ocross1
+         ocross = ocross1*exp(tau*dble(k1)**2)
 	 zz = dcmplx(fw(2*k1),fw(2*k1+1))
-         fk(k1) = cross*zz
+         fk(k1) = ocross*zz
 	 zz = dcmplx(fw(2*(nf1-k1)),fw(2*(nf1-k1)+1))
-         fk(-k1) = cross*zz
+         fk(-k1) = ocross*zz
       enddo
       if (ms/2*2.eq.ms) then
-         cross = -cross1*exp(tau*dble(ms/2)**2)
+         ocross = -ocross1*exp(tau*dble(ms/2)**2)
          zz = dcmplx(fw(2*nf1-ms),fw(2*nf1-ms+1))
-         fk(-ms/2) = cross*zz
+         fk(-ms/2) = ocross*zz
       endif
       deallocate(fw)
       return
       end
 
-      subroutine nufft1d2f90(nj,xj,cj, iflag,eps, ms,fk,ier)
+      subroutine nufft1d2f90(nj,xj,ocj, iflag,eps, ms,fk,ier)
       implicit none
       integer ier,iflag,iw1,iwsav,iwtot,j,jb1,jb1u,jb1d,k1
       integer ms,next235,nf1,nj,nspread,nw
-      real*8 cross,cross1,diff1,eps,hx,pi,rat,r2lamb,t1
+      real*8 ocross,ocross1,diff1,eps,hx,pi,rat,r2lamb,t1
       real*8 xj(nj),xc(-47:47)
       parameter (pi=3.141592653589793d0)
-      complex*16 cj(nj), fk(-ms/2:(ms-1)/2)
+      complex*16 ocj(nj), fk(-ms/2:(ms-1)/2)
       complex*16 zz
 ! ----------------------------------------------------------------------
       real*8, allocatable, save :: fw(:)
@@ -307,23 +307,23 @@
       call dcffti(nf1,fw(iwsav))
 
       t1 = pi * r2lamb / dble(nf1)**2
-      cross1 = 1d0/sqrt(r2lamb)
-      zz = cross1*fk(0)
+      ocross1 = 1d0/sqrt(r2lamb)
+      zz = ocross1*fk(0)
       fw(0) = dreal(zz)
       fw(1) = dimag(zz)
       do k1 = 1, (ms-1)/2
-         cross1 = -cross1
-         cross = cross1*exp(t1*dble(k1)**2)
-         zz = cross*fk(k1)
+         ocross1 = -ocross1
+         ocross = ocross1*exp(t1*dble(k1)**2)
+         zz = ocross*fk(k1)
          fw(2*k1) = dreal(zz)
          fw(2*k1+1) = dimag(zz)
-         zz = cross*fk(-k1)
+         zz = ocross*fk(-k1)
          fw(2*(nf1-k1)) = dreal(zz)
          fw(2*(nf1-k1)+1) = dimag(zz)
       enddo
-      cross = -cross1*exp(t1*dble(ms/2)**2)
+      ocross = -ocross1*exp(t1*dble(ms/2)**2)
       if (ms/2*2.eq.ms) then
-	 zz = cross*fk(-ms/2)
+	 zz = ocross*fk(-ms/2)
          fw(2*nf1-ms) = dreal(zz)
          fw(2*nf1-ms+1) = dimag(zz)
       endif
@@ -340,53 +340,53 @@
 
       t1 = pi/r2lamb
       do j = 1, nj
-         cj(j) = dcmplx(0d0,0d0)
+         ocj(j) = dcmplx(0d0,0d0)
          jb1 = int((xj(j)+pi)/hx)
          diff1 = (xj(j)+pi)/hx - jb1
          jb1 = mod(jb1, nf1)
          if (jb1.lt.0) jb1=jb1+nf1
          xc(0) = exp(-t1*diff1**2)
-         cross = xc(0)
-         cross1 = exp(2d0*t1 * diff1)
+         ocross = xc(0)
+         ocross1 = exp(2d0*t1 * diff1)
          do k1 = 1, nspread
-            cross = cross * cross1
-            xc(k1) = fw(iw1+k1)*cross
+            ocross = ocross * ocross1
+            xc(k1) = fw(iw1+k1)*ocross
          enddo
-         cross = xc(0)
-         cross1 = 1d0/cross1
+         ocross = xc(0)
+         ocross1 = 1d0/ocross1
          do k1 = 1, nspread-1
-            cross = cross * cross1
-            xc(-k1) = fw(iw1+k1)*cross
+            ocross = ocross * ocross1
+            xc(-k1) = fw(iw1+k1)*ocross
          enddo
 
          jb1d = min(nspread-1, jb1)
          jb1u = min(nspread, nf1-jb1-1)
          do k1 = -nspread+1, -jb1d-1
 	    zz = dcmplx(fw(2*(jb1+k1+nf1)),fw(2*(jb1+k1+nf1)+1))
-            cj(j) = cj(j) + xc(k1)*zz
+            ocj(j) = ocj(j) + xc(k1)*zz
          enddo
          do k1 = -jb1d, jb1u
 	    zz = dcmplx(fw(2*(jb1+k1)),fw(2*(jb1+k1)+1))
-            cj(j) = cj(j) + xc(k1)*zz
+            ocj(j) = ocj(j) + xc(k1)*zz
          enddo
          do k1 = jb1u+1, nspread
 	    zz = dcmplx(fw(2*(jb1+k1-nf1)),fw(2*(jb1+k1-nf1)+1))
-            cj(j) = cj(j) + xc(k1)*zz
+            ocj(j) = ocj(j) + xc(k1)*zz
          enddo
       enddo
       deallocate(fw)
       return
       end
 
-      subroutine nufft1d3f90(nj,xj,cj, iflag,eps, nk,sk,fk,ier)
+      subroutine nufft1d3f90(nj,xj,ocj, iflag,eps, nk,sk,fk,ier)
       implicit none
       integer ier,iw1,iwsave,iwtot,j,jb1,k1,kb1,kmax,nj,iflag,nk
       integer next235,nf1,nspread
-      real*8 ang,cross,cross1,diff1,eps,hx,hs,rat,pi,r2lamb1
+      real*8 ang,ocross,ocross1,diff1,eps,hx,hs,rat,pi,r2lamb1
       real*8 sm,sb,t1,t2,xm,xb
       real*8 xc(-47:47), xj(nj), sk(nk)
       parameter (pi=3.141592653589793d0)
-      complex*16 cj(nj), fk(nk), zz, cs
+      complex*16 ocj(nj), fk(nk), zz, ocs
 
 ! ----------------------------------------------------------------------
       integer nw, istart
@@ -461,25 +461,25 @@
          jb1 = int(dble(nf1/2) + (xj(j)-xb)/hx)
          diff1 = dble(nf1/2) + (xj(j)-xb)/hx - jb1
          ang = sb*xj(j)
-         cs = dcmplx(cos(ang),sin(ang)) * cj(j)
+         ocs = dcmplx(cos(ang),sin(ang)) * ocj(j)
 
          xc(0) = exp(-t1*diff1**2)
-         cross = xc(0)
-         cross1 = exp(2d0*t1 * diff1)
+         ocross = xc(0)
+         ocross1 = exp(2d0*t1 * diff1)
          do k1 = 1, nspread
-            cross = cross * cross1
-            xc(k1) = fw(iw1+k1)*cross
+            ocross = ocross * ocross1
+            xc(k1) = fw(iw1+k1)*ocross
          enddo
-         cross = xc(0)
-         cross1 = 1d0/cross1
+         ocross = xc(0)
+         ocross1 = 1d0/ocross1
          do k1 = 1, nspread-1
-            cross = cross * cross1
-            xc(-k1) = fw(iw1+k1)*cross
+            ocross = ocross * ocross1
+            xc(-k1) = fw(iw1+k1)*ocross
          enddo
 
          do k1 = -nspread+1, nspread
 	    istart = 2*(jb1+k1)
-	    zz = xc(k1)*cs
+	    zz = xc(k1)*ocs
             fw(istart) = fw(istart) + dreal(zz)
             fw(istart+1) = fw(istart+1) + dimag(zz)
          enddo
@@ -487,20 +487,20 @@
       if (iflag .lt. 0) sb = -sb
 
       t1 = pi * r2lamb1 / dble(nf1)**2
-      cross1 = (1d0-2d0*mod(nf1/2,2))/r2lamb1
+      ocross1 = (1d0-2d0*mod(nf1/2,2))/r2lamb1
       zz = dcmplx(fw(nf1),fw(nf1+1))
-      zz = cross1*zz
+      zz = ocross1*zz
       fw(nf1) = dreal(zz)
       fw(nf1+1) = dimag(zz)
       do k1 = 1, kmax
-         cross1 = -cross1
-         cross = cross1*exp(t1*dble(k1)**2)
+         ocross1 = -ocross1
+         ocross = ocross1*exp(t1*dble(k1)**2)
          zz = dcmplx(fw(nf1-2*k1),fw(nf1-2*k1+1))
-         zz = cross*zz
+         zz = ocross*zz
          fw(nf1-2*k1) = dreal(zz)
          fw(nf1-2*k1+1) = dimag(zz)
          zz = dcmplx(fw(nf1+2*k1),fw(nf1+2*k1+1))
-         zz = cross*zz
+         zz = ocross*zz
          fw(nf1+2*k1) = dreal(zz)
          fw(nf1+2*k1+1) = dimag(zz)
       enddo
@@ -524,17 +524,17 @@
 
          ! exp(-t1*(diff1-k1)**2) = xc(k1)
          xc(0) = exp(-t1*diff1**2)
-         cross = xc(0)
-         cross1 = exp(2d0*t1 * diff1)
+         ocross = xc(0)
+         ocross1 = exp(2d0*t1 * diff1)
          do k1 = 1, nspread
-            cross = cross * cross1
-            xc(k1) = fw(iw1+k1)*cross
+            ocross = ocross * ocross1
+            xc(k1) = fw(iw1+k1)*ocross
          enddo
-         cross = xc(0)
-         cross1 = 1d0/cross1
+         ocross = xc(0)
+         ocross1 = 1d0/ocross1
          do k1 = 1, nspread-1
-            cross = cross * cross1
-            xc(-k1) = fw(iw1+k1)*cross
+            ocross = ocross * ocross1
+            xc(-k1) = fw(iw1+k1)*ocross
          enddo
 
          fk(j) = dcmplx(0d0,0d0)
