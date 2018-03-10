@@ -16,10 +16,13 @@ for it = 1:length(Nlist)
     N = Nlist(it);
     
     x=sort(N*rand(N,1));
+    k = (N-1)*rand(N,1);
     x1=2*pi*x/N;
     
     tic;
-    nufftfun = nufftI(x,iflag,N,13,tol);
+   
+    nufftfun = nufftIII(k,x,iflag,N,100,tol);
+    
     timNUFFTFact(it) = toc;
     
     c=rand(N,1);
@@ -31,7 +34,7 @@ for it = 1:length(Nlist)
     timNUFFTApp(it) = toc/num;
     
     %for cnt = 1:num
-    %nufftfun = nufftIold(x,iflag,N,15,tol);
+    %nufftfun = nufftIIold(x,iflag,N,15,tol);
     %end
     %timNUFFTFact(it) = toc/num;
     
@@ -51,9 +54,7 @@ for it = 1:length(Nlist)
 %    timNUFFTAppnyu(it)=toc/num;
     
     
-    k=0:(N-1);
-    k = k(:);
-    [fhatM,ffun] = DeCom_NUFFT1D_I(c,x/N,k,tol);
+    [fhatM,ffun] = DeCom_NUFFT1D_III(c,x/N,k,tol);
     tic;
     for cnt = 1:num
         fhatM = ffun(c);

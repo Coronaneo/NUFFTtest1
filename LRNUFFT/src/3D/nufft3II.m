@@ -1,5 +1,5 @@
-function nufft2fun = nufft2II(x,iflag,ns,rt,tol)
-% NUFFT2II: Computation of nonuniform FFT2 in R^2 - Type II.
+function nufft3fun = nufft3II(x,iflag,ns,rt,tol)
+% NUFFT3II: Computation of nonuniform FFT3 in R^2 - Type II.
 %   gfun = NUFFT2II(x,iflag,ns,rt,tol) provides the fast algorithm for
 %   nufft2 of type II. x is the location of sources on interval
 %   [0,ns-1]x[0,ns-1], iflag determines the sign of FFT2, and ns is the
@@ -24,11 +24,11 @@ else
 end
 
 if nargin < 3
-    ns = ceil(maxel(x))+1;
+    ns = ceil(max(max(x)))+1;%%±¾À´ÊÇmaxel
 end
 
 if nargin < 4
-    rt = 135;
+    rt = 175;
 end
 
 if nargin < 5
@@ -37,8 +37,8 @@ end
 
 n = size(x,1);
 
-[k1,k2] = ndgrid(0:ns-1);
-k = [k1(:) k2(:)];
+[k1,k2,k3] = ndgrid(0:ns-1,0:ns-1,0:ns-1);
+k = [k1(:) k2(:) k3(:)];
 
 fftconst = iflag*1i/ns*2*pi;
 
@@ -46,23 +46,23 @@ ratiofun = @(x,k)exp(fftconst*(x-round(x))*k');
 [U,V] = lowrank(x,k,ratiofun,tol,rt,rt);
 
 xsub = mod(round(x),ns)+1;
+xxsub = sub2ind([ns ns ns],xsub(:,1),xsub(:,2),xsub(:,3));
 
-nufft2fun = @(c)nufft2IIfun(c);
+nufft3fun = @(c)nufft3IIfun(c);
 
-    function fft2c = nufft2IIfun(c)
+    function fft3c = nufft3IIfun(c)
         ncol = size(c,2);
         r = size(V,2);
 
-        c = reshape( repmat(conj(V),1,ncol) ...
-            .*reshape(repmat(c,r,1), ns^2, r*ncol), ns, ns, r*ncol);
+        c = reshape( repmat(conj(V),1,ncol).*reshape(repmat(c,r,1), ns^3, r*ncol), ns,ns,ns,r*ncol);
         if iflag < 0
-            fft2c = fft2(c);
+            fft3c = fft3(c);
         else
-            fft2c = ifft2(c);
+            fft3c = ifft3(c);
         end
-        fft2c = reshape(fft2c,ns^2,r*ncol);
-        fft2c = fft2c(sub2ind([ns ns],xsub(:,1),xsub(:,2)),:);
-        fft2c = squeeze(sum(reshape(repmat(U,1,ncol).*fft2c,n,r,ncol),2));
+        fft3c = reshape(fft3c,ns^3,r*ncol);
+        fft3c = fft3c(xxsub,:);
+        fft3c = squeeze(sum(reshape(repmat(U,1,ncol).*fft3c,n,r,ncol),2));
     end
 
 end

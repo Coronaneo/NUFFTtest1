@@ -8,7 +8,7 @@ function nufftfun = nufftII(x,iflag,ns,rt,tol)
 %   NUFFT of type II is defined as follows.
 %                 ns
 %     f(x(j)) = w sum g(k) exp(+/-i 2pi * k x(j) / n) 
-%                 j=1
+%                 k=1
 %   for 1 <= k <= ns and 1 <= x(j) <= ns.
 %   If (iflag .ge.0) the + sign is used in the exponential and a = 1/ns.
 %   If (iflag .lt.0) the - sign is used in the exponential and a = 1.

@@ -1,4 +1,4 @@
-function nufft2fun = nufft2III(k,x,iflag,ns,rt,tol)
+function nufft3fun = nufft3III(k,x,iflag,ns,rt,tol)
 % NUFFT2III: Computation of nonuniform FFT2 in R^2 - Type III.
 %   gfun = NUFFT2III(k,x,iflag,ns,rt,tol) provides the fast algorithm for
 %   nufft2 of type II. k is the location of targets on interval [0,ns-1]x[0,ns-1], x
@@ -24,7 +24,7 @@ else
 end
 
 if nargin < 4
-    ns = max(ceil(maxel(x)),ceil(maxel(k)))+1;
+    ns = max(ceil(max(max(x))),ceil(max(max(k))))+1;
 end
 
 if nargin < 5
@@ -42,18 +42,19 @@ ratiofun = @(k,x)exp(fftconst*(k-round(k))*x');
 
 ksub = mod(round(k),ns)+1;
 
-nufft2Ifun = nufft2I(x,iflag,ns,rt,tol);
+nufft3Ifun = nufft3I(x,iflag,ns,rt,tol);
+kksub = sub2ind([ns ns ns],ksub(:,1),ksub(:,2),ksub(:,3));
 
-nufft2fun = @(c)nufft2IIIfun(c);
+nufft3fun = @(c)nufft3IIIfun(c);
 
-    function fft2c = nufft2IIIfun(c)
+    function fft3c = nufft3IIIfun(c)
         [n,ncol] = size(c);
         r = size(V,2);
         
         c = repmat(conj(V),1,ncol).*reshape(repmat(c,r,1), n, r*ncol);
-        fft2c = nufft2Ifun(c);
-        fft2c = fft2c(sub2ind([ns ns],ksub(:,1),ksub(:,2)),:);
-        fft2c = squeeze(sum(reshape(repmat(U,1,ncol).*fft2c,n,r,ncol),2));
+        fft3c = nufft3Ifun(c);
+        fft3c = fft3c(kksub,:);
+        fft3c = squeeze(sum(reshape(repmat(U,1,ncol).*fft3c,n,r,ncol),2));
     end
 
 end

@@ -1,6 +1,6 @@
-function [fhat,ffun] = DeCom_NUFFT1D_I(f,x,k,tol)
-% This code implements the 1D type I forward NUFFT.
-% fhat_j = \sum_{s} f_s exp(-2*pi*i*x_s*k_j)
+function [fhat,ffun] = DeCom_NUFFT1D_II(f,x,k,tol)
+% This code implements the 1D type II forward NUFFT.
+% fhat_s = \sum_{j} f_j exp(-2*pi*i*x_s*k_j)
 %
 % Input:
 % f - a signal of size N by 1, sampled on x
@@ -43,18 +43,18 @@ else
         end
     end
 end
-[L,R,idx] = DeCom_NUFFT1D_I_Fac(x,k,tol);
+[L,R,idx] = DeCom_NUFFT1D_II_Fac(x,k,tol);
 [N,r] = size(L);
 Id = sparse(idx,1:N,ones(1,N),N,N);
 if sft
-    ffun = @(f) sum(L.*fftshift(fft(Id*(R.*repmat(f,[1,r])), [], 1),1),2);
+    ffun = @(f) sum(L.*fftshift(fft((R.*repmat(f,[1,r])), [], 1),1),2);
 else
-    ffun = @(f) sum(L.*fft(Id*(R.*repmat(f,[1,r])), [], 1),2);
+    ffun = @(f) sum(L.*fft((R.*repmat(f,[1,r])), [], 1)(idx,:),2);
 end
 fhat = ffun(f);
 end
 
-function [L,R,t] = DeCom_NUFFT1D_I_Fac(x,k,tol)
+function [L,R,t] = DeCom_NUFFT1D_II_Fac(x,k,tol)
 % This code implements the low-rank factorization for the 1D type II NUFFT
 % in O(N) operations, where N is the length of the signal.
 %
@@ -86,8 +86,8 @@ if gamma < 1e-16 % safe guard
     L = ones(N,1); R = ones(N,1);
 else
     % randomized low-rank factorization
-    fun = @(k,x) exp(-2*pi*i*k*(x-(mod(round(x*N),N)/N))');
-    [U,S,V] = lowrank(k(:),x(:),fun,tol,5*K,K);
+    fun = @(x,k) exp(-2*pi*1i*(x-(mod(round(x*N),N)/N))*k');
+    [U,S,V] = lowrank(x(:),k(:),fun,tol,K,K);
     L = U*S;
     R = conj(V);
     %err = norm(B-L*transpose(R))/norm(B);
@@ -182,4 +182,3 @@ S = S(idx,idx);
 V = V(:,idx);
 
 end
-
