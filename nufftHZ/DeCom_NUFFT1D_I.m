@@ -93,14 +93,14 @@ gamma = norm(N*x-s, inf);
 % for randomized low-rank factorization
 xi = log(log(10/tol)/gamma/7);
 lw = xi - log(xi) + log(xi)/xi + .5*log(xi)^2/xi^2 - log(xi)/xi^2;
-K = min(16,ceil(5*gamma*exp(lw)));
+K = min(16,ceil(5*gamma*exp(lw)))
 if gamma < 1e-16 % safe guard
     % DIEGO RUIZ?ANTOLIN AND ALEX TOWNSEND's method is not stable for small gamma
     L = ones(N,1); R = ones(N,1);
 else
     % randomized low-rank factorization
     fun = @(k,x) exp(-2*pi*i*k*(x-(mod(round(x*N),N)/N))');
-    [U,S,V] = lowrank(k(:),x(:),fun,tol,5*K,K);
+    [U,S,V] = lowrank(k(:),x(:),fun,tol,K,K);
     L = U*S;
     R = conj(V);
     %err = norm(B-L*transpose(R))/norm(B);
