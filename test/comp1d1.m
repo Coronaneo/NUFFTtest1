@@ -1,21 +1,21 @@
-Nlist = 2.^(7:17);
+Nlist = 2.^(7:12);
 
 timNUFFTFact = zeros(size(Nlist));
-timNUFFTApp = zeros(size(Nlist));
+timeNUFFTApp = zeros(size(Nlist));
 timNUFFTAppold = zeros(size(Nlist));
 timNUFFTAppnyu=zeros(size(Nlist));
 timeM=zeros(size(Nlist));
 errNUFFT = zeros(size(Nlist));
 errNUFFT1 = zeros(size(Nlist));
-tol=1e-12;
-num = 150;
+tol=1e-6;
+num = 100;
 iflag=-1;
 
 for it = 1:length(Nlist)
     
     N = Nlist(it);
     
-    x=sort(N*rand(N,1));
+    x=(1:N)';
     x1=2*pi*x/N;
     
     tic;
@@ -40,29 +40,31 @@ for it = 1:length(Nlist)
     %nufftc1 = nufftfun(c);
     %end
     %timNUFFTAppold(it) = toc/num;
-%    tic;
-%    for cnt = 1:num
-%    fk=zeros(N,1)+1i*zeros(N,1);
-%    ier=0;
-%   nufft1d_demof90(N, x1, c, iflag, tol, N,fk,ier);
-    %fk=nufft1d1(N,x1,c,-1,tol,N)*N;
-    %fk=fftshift(fk);
-%    end
-%    timNUFFTAppnyu(it)=toc/num;
+    
+    tic;
+    for cnt = 1:num
+    fk1 = nufft1d1(N,x1,c,iflag,tol,N)*N;
+    
+    end
+    timNUFFTAppnyu(it)=toc/num;
     
     
-    k=0:(N-1);
+    k=-N/2:(N/2-1);
     k = k(:);
     [fhatM,ffun] = DeCom_NUFFT1D_I(c,x/N,k,tol);
+    
     tic;
+    %profile on
     for cnt = 1:num
         fhatM = ffun(c);
     end
+    %profile report
     timeM(it) = toc/num;
+   
     
     
-    errNUFFT(it)=norm(nufftc-fhatM,2)/norm(nufftc,2);
-    %errNUFFT1(it)=norm(nufftc1-fhatM,2)/norm(nufftc1,2);
+    errNUFFT(it)=norm(fk1-fhatM,2)/norm(fhatM,2);
+    errNUFFT1(it)=norm(nufftc-fhatM,2)/norm(nufftc,2);
 end
 
 timNUFFTApp
@@ -70,6 +72,13 @@ timNUFFTApp
 %timNUFFTAppnyu
 timeM
 errNUFFT,
+errNUFFT1
+figure
+loglog(Nlist,timNUFFTApp);
+hold on;
+loglog(Nlist,timeM);
+xlabel('N'),ylabel('time : s'),title('Comparison,1D type 1,tol =1e-6'),legend('timeYZ','timeHZ','Location','northwest')
+
 %errNUFFT1
 %timecomp=timeM./timNUFFTAppnyu
 fid=fopen('./result1d1/time1d1YH.mat','at');

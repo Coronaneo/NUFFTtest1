@@ -1,0 +1,1 @@
+Please run NUFFTtest_startup.m first.

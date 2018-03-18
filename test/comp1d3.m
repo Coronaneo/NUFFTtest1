@@ -1,4 +1,4 @@
-Nlist = 2.^(7:17);
+Nlist = 2.^(7:16);
 
 timNUFFTFact = zeros(size(Nlist));
 timNUFFTApp = zeros(size(Nlist));
@@ -8,7 +8,7 @@ timeM=zeros(size(Nlist));
 errNUFFT = zeros(size(Nlist));
 errNUFFT1 = zeros(size(Nlist));
 tol=1e-12;
-num = 150;
+num = 50;
 iflag=-1;
 
 for it = 1:length(Nlist)
@@ -43,15 +43,11 @@ for it = 1:length(Nlist)
     %nufftc1 = nufftfun(c);
     %end
     %timNUFFTAppold(it) = toc/num;
-%    tic;
-%    for cnt = 1:num
-%    fk=zeros(N,1)+1i*zeros(N,1);
-%    ier=0;
-%   nufft1d_demof90(N, x1, c, iflag, tol, N,fk,ier);
-    %fk=nufft1d1(N,x1,c,-1,tol,N)*N;
-    %fk=fftshift(fk);
-%    end
-%    timNUFFTAppnyu(it)=toc/num;
+    tic;
+    for cnt = 1:num
+    fk1 = nufft1d3(N,x1,c,iflag,tol,N,k);
+    end
+    timNUFFTAppnyu(it)=toc/num;
     
     
     [fhatM,ffun] = DeCom_NUFFT1D_III(c,x/N,k,tol);
@@ -62,15 +58,23 @@ for it = 1:length(Nlist)
     timeM(it) = toc/num;
     
     
-    errNUFFT(it)=norm(nufftc-fhatM,2)/norm(nufftc,2);
-    %errNUFFT1(it)=norm(nufftc1-fhatM,2)/norm(nufftc1,2);
+    errNUFFT(it)=norm(fk1-fhatM,2)/norm(fk1,2);
+    errNUFFT1(it)=norm(fk1-nufftc,2)/norm(fk1,2);
 end
 
 timNUFFTApp
 %timNUFFTAppold
-%timNUFFTAppnyu
+timNUFFTAppnyu
 timeM
 errNUFFT,
+errNUFFT1
+figure
+loglog(Nlist,timNUFFTAppnyu);
+hold on;
+loglog(Nlist,timeM);
+hold on;
+loglog(Nlist,timNUFFTApp)
+xlabel('N'),ylabel('time : s'),title('Comparison,1D type III,tol =1e-12'),legend('timeNYU','timeHZ','timeYZ','Location','northwest')
 %errNUFFT1
 %timecomp=timeM./timNUFFTAppnyu
 fid=fopen('./result1d1/time1d1YH.mat','at');

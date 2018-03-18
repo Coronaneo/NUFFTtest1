@@ -1,4 +1,4 @@
-function [fhat,ffun] = DeCom_NUFFT1D_II(f,x,k,tol)
+function [fhat,ffun,L,R,Idx,M2] = DeCom_NUFFT1D_II(f,x,k,tol)
 % This code implements the 1D type II forward NUFFT.
 % fhat_s = \sum_{j} f_j exp(-2*pi*i*x_s*k_j)
 %
@@ -45,14 +45,27 @@ else
 end
 [L,R,idx] = DeCom_NUFFT1D_II_Fac(x,k,tol);
 [N,r] = size(L);
-Id = sparse(idx,1:N,ones(1,N),N,N);
-if sft
-    ffun = @(f) sum(L.*fftshift(fft((R.*repmat(f,[1,r])), [], 1),1),2);
-else
-    fftc=fft((R.*repmat(f,[1,r])), [], 1);% how to get a permutation?
-    ffun = @(f) sum(L.*fftc(idx,:),2);
+Idx=sparse(1:N,idx,ones(1,N),N,N);
+ffun = @(f)fffun(f,L,R,r,Idx,sft);
+[fhat,M2] = ffun(f);
 end
-fhat = ffun(f);
+
+function [fhat,M2]=fffun(f,L,R,r,Idx,sft)
+if sft
+    %profile on
+    %Rrep=R.*repmat(f,[1,r]);
+    %Ffft=fftshift(Rrep,1);
+    %Fft=fft(Ffft,[],1);
+    %Ift=Idx*Fft;
+    %Lft=L.*Ift;
+    %Sft=sum(Lft,2);
+    %fhat =  Sft;
+    %profile report
+    M2=fftshift(R.*repmat(f,[1,r]),1);
+    fhat = sum(L.*(Idx*fft(fftshift(R.*repmat(f,[1,r]),1),[],1)),2);
+else
+    fhat =  sum(L.*(Idx*fft((R.*repmat(f,[1,r])), [], 1)),2);
+end
 end
 
 function [L,R,t] = DeCom_NUFFT1D_II_Fac(x,k,tol)
@@ -81,14 +94,14 @@ gamma = norm(N*x-s, inf);
 % for randomized low-rank factorization
 xi = log(log(10/tol)/gamma/7);
 lw = xi - log(xi) + log(xi)/xi + .5*log(xi)^2/xi^2 - log(xi)/xi^2;
-K = min(16,ceil(5*gamma*exp(lw)))
+K = min(16,ceil(5*gamma*exp(lw)));
 if gamma < 1e-16 % safe guard
     % DIEGO RUIZ?ANTOLIN AND ALEX TOWNSEND's method is not stable for small gamma
     L = ones(N,1); R = ones(N,1);
 else
     % randomized low-rank factorization
     fun = @(x,k) exp(-2*pi*1i*(x-(mod(round(x*N),N)/N))*k');
-    [U,S,V] = lowrank(x(:),k(:),fun,tol,K,K);
+    [U,S,V] = lowrank(x(:),k(:),fun,tol,5*K,K);
     L = U*S;
     R = conj(V);
     %err = norm(B-L*transpose(R))/norm(B);

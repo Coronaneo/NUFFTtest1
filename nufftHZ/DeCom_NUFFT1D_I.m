@@ -1,4 +1,4 @@
-function [fhat,ffun] = DeCom_NUFFT1D_I(f,x,k,tol)
+function [fhat,ffun,L,R,Id,M1] = DeCom_NUFFT1D_I(f,x,k,tol)
 % This code implements the 1D type I forward NUFFT.
 % fhat_j = \sum_{s} f_s exp(-2*pi*i*x_s*k_j)
 %
@@ -46,14 +46,27 @@ end
 [L,R,idx] = DeCom_NUFFT1D_I_Fac(x,k,tol);
 [N,r] = size(L);
 Id = sparse(idx,1:N,ones(1,N),N,N);
-if sft
-    ffun = @(f) sum(L.*fftshift(fft(Id*(R.*repmat(f,[1,r])), [], 1),1),2);
-else
-    ffun = @(f) sum(L.*fft(Id*(R.*repmat(f,[1,r])), [], 1),2);
-end
-fhat = ffun(f);
+ffun=@(f)fffun(f,L,R,Id,r,sft);
+[fhat,M1] = ffun(f);
 end
 
+function [fhat,M1]=fffun(f,L,R,Id,r,sft)
+if sft
+    %profile on
+    %Rrep=R.*repmat(f,[1,r]);
+    %Irep=Id*Rrep;
+    %Fft=fft(Irep,[],1);
+    %Ffft=fftshift(Fft,1);
+    %Lft=L.*Ffft;
+    %Sft=sum(Lft,2);
+    %fhat =  Sft;
+    %profile report
+    M1=Id*(R.*repmat(f,[1,r]));
+    fhat=  sum(L.*fftshift(fft(Id*(R.*repmat(f,[1,r])),[],1),1),2);
+else
+    fhat =  sum(L.*fft(Id*(R.*repmat(f,[1,r])), [], 1),2);
+end
+end
 function [L,R,t] = DeCom_NUFFT1D_I_Fac(x,k,tol)
 % This code implements the low-rank factorization for the 1D type II NUFFT
 % in O(N) operations, where N is the length of the signal.
@@ -80,7 +93,7 @@ gamma = norm(N*x-s, inf);
 % for randomized low-rank factorization
 xi = log(log(10/tol)/gamma/7);
 lw = xi - log(xi) + log(xi)/xi + .5*log(xi)^2/xi^2 - log(xi)/xi^2;
-K = min(16,ceil(5*gamma*exp(lw)))
+K = min(16,ceil(5*gamma*exp(lw)));
 if gamma < 1e-16 % safe guard
     % DIEGO RUIZ?ANTOLIN AND ALEX TOWNSEND's method is not stable for small gamma
     L = ones(N,1); R = ones(N,1);

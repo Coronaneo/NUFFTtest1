@@ -1,4 +1,4 @@
-function [fhat,ffun] = DeCom_NUFFT1D_III(f,x,k,tol)
+function [fhat,ffun,L,R,Idk,M3] = DeCom_NUFFT1D_III(f,x,k,tol)
 % This code implements the 1D type I forward NUFFT.
 % fhat_j = \sum_{s} f_s exp(-2*pi*i*x_s*k_j)
 %
@@ -30,10 +30,25 @@ M = numel(k);
 [N,r] = size(L);
 Id = sparse(idx,1:N,ones(1,N),N,N);
 idk=mod(round(k),M)+1;
+
+Idk=sparse(1:N,idk,ones(1,N),N,N);
 %ffun = @(f) sum(L.*fftshift(fft(Id*(R.*repmat(f,[1,r])), [], 1),1),2);
-fftc = fft(Id*(R.*repmat(f,[1,r])), [], 1);
-ffun = @(f) sum(L.*fftc(idk,:),2);
-fhat = ffun(f);
+ffun=@(f)fffun(f,L,R,Idk,r,Id);
+[fhat,M3] = ffun(f);
+end
+
+function [fhat,M3]=fffun(f,L,R,Idk,r,Id)
+%profile on
+%Rrep=R.*repmat(f,[1,r]);
+%Ift=Id*Rrep;
+%Fft=fft(Ift,[],1);
+%Idft=Idk*Fft;
+%Lft=L.*Idft;
+%Sft=sum(Lft,2);
+%fhat=Sft;
+M3=Id*(R.*repmat(f,[1,r]));
+ fhat =  sum(L.*(Idk*fft(Id*(R.*repmat(f,[1,r])), [], 1)),2);
+%profile report
 end
 
 function [L,R,t] = DeCom_NUFFT1D_III_Fac(x,k,tol)
